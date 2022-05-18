@@ -103,11 +103,12 @@ module.exports = {
     });
   },
   categoryView: (categoryview) => {
+  
     return new promise(async (resolve, reject) => {
       let product = await db
         .get()
         .collection(collection.PRODUCT_COLLECTION)
-        .find({ category: categoryview })
+        .find({ category:categoryview })
         .toArray();
       resolve(product);
     });
