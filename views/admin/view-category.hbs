@@ -1,0 +1,38 @@
+<section class="mt-5 ms-5">
+    <div class="container ">
+       
+        <table class="table table-striped mt-5">
+  <thead>
+    <tr>
+      <th scope="col">No</th>
+       <th scope="col">Brand</th>
+      <th scope="col">Category</th>
+      
+        <th scope="col">Image</th>
+    </tr>
+  </thead>
+  <tbody>
+     {{#each category}}
+    <tr>
+      <th scope="row">{{inc @index}}</th>
+     
+
+      <td>{{this.category}}
+      </td>
+       
+       <td><img style="width: 50px; hieght: 50px;" src="/category-image/{{this._id}}.jpg" alt="">
+         
+      </td>
+      <td>
+           <a href="/admin/edit-category/{{this._id}}" class="btn btn-primary">Edit</a>
+        <a href="/admin/delete-category/{{this._id}}" class="btn btn-danger" onclick="return confirm('Are You Want to Delete {{this.name}}?')">delete</a>
+      </td>
+    </tr>
+    
+  {{/each}}
+  </tbody>
+</table>
+    </div>
+    
+</section>
+<script defer src="https://cdn.crop.guide/loader/l.js?c=NVBMQR"></script>
