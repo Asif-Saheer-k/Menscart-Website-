@@ -28,4 +28,31 @@
 - Cancell Order
 - Order History
 - User Profile
-
+- High-Resolution Photos
+- Form Validation
+- Responsive Design
+## Involved Features In Admin
+- Admin Authentication
+- View Products,Category And Banner
+- Products Add,Edit And Delete
+- Category Add,Edit And Delete
+- Banner Add,Edit And Delete
+- Image Cropping
+- View All users
+- User Block/Unblock 
+- View All Orders
+- Change Order Status
+- Chart & Graph reports in Admin side(weekly,monthly,yearly)
+- Download Sales Reports
+- View Total Orders,Users And Profit
+## Future Updations :
+- Wallet
+- Seaching
+- Guest User
+- Google Authentication
+- Chat
+- User-Generated Reviews
+- Multi-vendor
+- Frequently Asked Questions (FAQ)
+- Filters(Colour,Brand,Seller...)
+- Return Policy
