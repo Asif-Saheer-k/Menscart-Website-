@@ -12,13 +12,16 @@
             
               <h2 class="fw-bold mb-2">Create New Account?</h2>
               <P id="Submit-error" class="text-danger"></P>
-              <p class="text-white-50 mb-5">Please enter your Details!</p>
+              <p class="text-white-50 mb-5">Please enter your Details!{{referel}}</p>
              
               <p class="text-danger">{{#if phoneAll}}Phone Number Already Exist {{/if}}{{#if email}}Email Already Exist{{/if}}</p>
               
 
                  <label class="form-label text-muted" for="typeEmailX"></label>
               <div class="form-outline form-white mb-4">
+              
+                <input type="text" name="referedCode" value="{{referel}}" id="referalCode" hidden/>
+               
                 <input type="text" name="name" id="userName" placeholder="Enter Your Name" class="form-control form-control-lg"  required   onkeyup=" validateName()"/>
                 <p id="Name-error" class="error text-danger"></p>
                 

@@ -7,6 +7,7 @@ const async = require("hbs/lib/async");
 const { resolve, reject } = require("promise");
 const { response } = require("express");
 const Razorpay = require("razorpay");
+const refferel=require('referral-code-generator')
 
 var instance = new Razorpay({
   key_id: "rzp_test_IYqnwXk3p7eSL2",
@@ -14,16 +15,32 @@ var instance = new Razorpay({
 });
 module.exports = {
   doSignup: (userData) => {
+    let referel=refferel.alphaNumeric('uppercase', 1, 4)
+    console.log(referel);
+    userData.referel=referel;
+    console.log(userData);
     console.log(userData.phoneNumber);
+    
+   
     return new promise(async (resolve, request) => {
       userData.password = await bcrypt.hash(userData.password, 10);
+
       db.get()
         .collection(collection.USER_COLLECTION)
         .insertOne(userData)
         .then((data) => {
+
           resolve(data);
         });
     });
+
+  },
+  findrefferCode:(referredCode)=>{
+   return new promise((resolve,reject)=>{
+     db.get().collection(collection.USER_COLLECTION).updateOne({referel:referredCode},{
+      $inc:{Wallet: 100}
+     })
+   })
   },
   doLogin: (userData) => {
     console.log(userData);
@@ -99,8 +116,8 @@ module.exports = {
         .collection(collection.USER_COLLECTION)
         .findOne({ $or: [{ email: email }, { phoneNumber: phone }] });
       console.log(user);
-      resolve(user);
-    });
+      resolve(user);   
+    });  
   },
   categoryView: (categoryview) => {
     return new promise(async (resolve, reject) => {
@@ -345,11 +362,6 @@ module.exports = {
     console.log("lp", method);
     return new promise((resolve, reject) => {
       let status = order["payment-method"] == "COD" ? "pending" : "pending";
-      console.log(status);
-      console.log(order);
-      console.log(products);
-      console.log(total);
-      console.log(name);
       var currentdate = new Date();
       var dd = String(currentdate.getDate()).padStart(2, '0');
       var mm = String(currentdate.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -1006,12 +1018,12 @@ module.exports = {
       await db
         .get()
         .collection(collection.COUPON_COLLECTION)
-        .updateOne(
-          { coupon: code },
-          {
+        .updateOne(   
+          { coupon: code },   
+          {     
             $push: { user: obj },
-          }
-        )
+          }    
+        )      
         .then((response) => {
           console.log(response);
           resolve(response);
@@ -1082,6 +1094,37 @@ module.exports = {
     return new promise(async(resolve,reject)=>{
       let product=await db.get().collection(collection.PRODUCT_COLLECTION).find().toArray()
       resolve(product)
+    })
+  },
+  updateWallet:(userID)=>{
+    return new promise((resolve,reject)=>{
+      db.get().collection(collection.USER_COLLECTION).updateOne({_id:objectId(userID)},{
+        $set:{
+          Wallet:0
+        }
+      }).then((response)=>{
+        resolve(response)
+        console.log(response);
+      })
+    })
+  },
+  updateWallett:(userId,amount)=>{
+    return new promise((resolve,reject)=>{
+      db.get().collection(collection.USER_COLLECTION).updateOne({_id:objectId(userId)},{
+        $set:{
+          Wallet:amount
+        }
+      }).then((response)=>{
+        resolve(response)
+        console.log(response);
+      })
+
+    })
+  },
+  findWallet:(user)=>{
+    return new promise(async(resolve,reject)=>{
+      let Wallet=await db.get().collection(collection.USER_COLLECTION).findOne({_id:objectId(user)})
+      resolve(Wallet.Wallet)
     })
   }
  

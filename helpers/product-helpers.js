@@ -8,6 +8,7 @@ const async = require('hbs/lib/async');
 const { resolve, reject } = require('promise');
 const { response } = require('express');
 const userHepers = require('./user-hepers');
+
 module.exports={
     addproduct:(product,callback)=>{
         console.log(product);

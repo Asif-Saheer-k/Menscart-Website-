@@ -12,6 +12,7 @@ const AccountSsid = process.env.AccountSsid;
 const token = process.env.token;
 const client = require("twilio")(AccountSsid, token);
 var paypal = require("paypal-rest-sdk");
+const userHepers = require("../helpers/user-hepers");
 
 paypal.configure({
   mode: "sandbox", //sandbox or live
@@ -32,6 +33,7 @@ router.get("/", async function (req, res, next) {
   let user = req.session.user;
   console.log(user);
   req.session.discount = 0;
+  req.session.Wallet=0;
   cartCount = null;
   wishilistCount = null;
   var today = new Date();
@@ -67,7 +69,7 @@ router.get("/", async function (req, res, next) {
         });
       });
     });
-  });
+  }); 
 });
 router.get("/login", (req, res) => {
   if (req.session.loggedIn) {
@@ -79,14 +81,19 @@ router.get("/login", (req, res) => {
   }
 });
 router.get("/signup", (req, res) => {
-  res.render("user/signup");
+  let referel=req.query?.referel
+console.log(referel);
+  res.render("user/signup",{referel});
 });
 
 router.post("/signup", (req, res) => {
-  let email = req.body.email;
+  let email = req.body.email; 
   let phone = req.body.phoneNumber;
+ 
+  req.session.phoneNumber=phone 
+
   req.session.userDetails=req.body
-  req.session.phoneNumber=phone
+  console.log();
   console.log(email);
   console.log(phone);
   userHelpers.emailCheck(email, phone).then((resolve) => {
@@ -100,7 +107,6 @@ router.post("/signup", (req, res) => {
       }
     } else {
       let phone =req.session.phoneNumber;
-      console.log("ajmal",phone);
       client.verify
         .services(serviceSsid)
         .verifications.create({ to: `+91${phone}`, channel: "sms" })
@@ -114,6 +120,17 @@ router.post("/signup", (req, res) => {
   });
 });
 router.post('/singupverify-otp',(req,res)=>{
+
+  if (req.session.userDetails.referedCode) {
+    req.session.userDetails.Wallet=100
+    userHelpers.findrefferCode(req.body.referedCode).then(()=>{
+      
+    })
+  }else{
+    req.session.userDetails.Wallet=0
+  }
+  console.log(req.session.userDetails,"...........................................");
+
   console.log(req.body);
   let phone=req.session.phoneNumber
   let otp=req.body.phoneVerify
@@ -173,8 +190,15 @@ router.get("/cart", verifylogin, async (req, res) => {
   let totalValue = await userHelpers.getTotalAmount(req.session.user?._id);
   req.session.total = totalValue - req.session.discount;
   console.log("ammen", req.session.total, totalValue, req.session.discount);
-
-  let total = req.session.total;
+  console.log(req.session.user,"/////////////");
+  if(req.session.Wallet>0){
+    if(req.session.total==0){
+      req.session.user.Wallet=req.session.Wallet
+    }else{
+    req.session.user.Wallet=0
+    }
+  }
+  let total = req.session.total-req.session.Wallet
   cartCount = null;
   if (req.session.user) {
     var cartCount = await userHelpers.getCarCount(req.session.user._id);
@@ -182,13 +206,16 @@ router.get("/cart", verifylogin, async (req, res) => {
       req.session.user._id
     );
   }
-  if (cartCount == 0) {
+let Wallet=await userHepers.findWallet(req.session.user._id)
+
+  if (cartCount==0) {
     res.render("user/cart-empty", {
       products,
       user: req.session.user,
       cartCount,
       total,
-      wishilistCount,
+      wishilistCount
+  
     });
   } else {
     res.render("user/cart", {
@@ -197,6 +224,8 @@ router.get("/cart", verifylogin, async (req, res) => {
       cartCount,
       total,
       wishilistCount,
+      Wallet
+      
     });
   }
 });
@@ -344,8 +373,7 @@ router.get("/category-view/:id", async (req, res) => {
 // quantity
 router.post("/change-product-quantity", async (req, res, next) => {
   console.log(req.body);
-  console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
-  userHelpers.changeProductQuantity(req.body).then(async (response) => {
+    userHelpers.changeProductQuantity(req.body).then(async (response) => {
     let price = await userHelpers.getTotalAmount(req.body.user);
     req.session.total = price - req.session.discount;
     response.total = req.session.total;
@@ -362,10 +390,13 @@ router.post("/remove-product-cart", (req, res) => {
 
 router.get("/place-order", verifylogin, async (req, res) => {
   if(req.session.total==0){
+   
     res.redirect('/')
   }else{
   let total = await userHelpers.getTotalAmount(req.session.user._id);
-  req.session.total = total - req.session.discount;
+  req.session.total = total - req.session.discount-req.session.Wallet;
+   
+
   let price = req.session.total;
   let discount = req.session.discount;
   if (req.session.user) {
@@ -404,9 +435,9 @@ router.get("/place-order", verifylogin, async (req, res) => {
 router.post("/place-order", verifylogin, async (req, res) => {
   console.log("hoi",req.session.total);
   req.session.orders=req.body
-  console.log(req.body,"hggggggggggggggggggggggggggggggggggggggggggg");
   let totalPrice = await userHelpers.getTotalAmount(req.body.userId);
-  let total = totalPrice - req.session.discount;
+
+  let total = totalPrice-req.session.discount-req.session.Wallet;
   let userName = req.session.user.name;
 
       if (req.body["payment-method"] == "COD") {
@@ -497,6 +528,7 @@ router.post("/place-order", verifylogin, async (req, res) => {
       console.log(oderId);
       req.session.total=0
       req.session.discount = 0;
+      req.session.Wallet = 0;
 
     })
 
@@ -735,7 +767,7 @@ router.get("/add-new-address", async (req, res) => {
   
   let total = await userHelpers.getTotalAmount(req.session.user._id);
   let discount = req.session.discount;
-  req.session.total = total - req.session.discount;
+  req.session.total = total - req.session.discount-req.session.Wallet;
   let price = req.session.total;
   if (req.session.user) {
     var cartCount = await userHelpers.getCarCount(req.session.user._id);
@@ -765,7 +797,7 @@ router.post("/add-new-address", async (req, res) => {
  
 
   let totalPrice = await userHelpers.getTotalAmount(req.body.userId);
-  let total = totalPrice - req.session.discount;
+  let total = totalPrice - req.session.discount-req.session.Wallet;
   req.session.total=total
   
 
@@ -989,5 +1021,31 @@ router.post("/change-Password", (req, res) => {
     res.json(response);
   });
 });
+router.get('/updateWallet',(req,res)=>{
+  console.log(req.session.user.Wallet);
+  if(req.session.user.Wallet<req.session.total){
+    req.session.total=req.session.total-req.session.user.Wallet
+    req.session.Wallet=req.session.user.Wallet
+    userHelpers.updateWallet(req.session.user._id).then((resp)=>{
+      console.log("response",req.session.user.Wallet);
+      req.session.user.Wallet=0 
+     console.log("response",req.session.user.Wallet);
+
+    })
+    res.json({total:req.session.total,Wallet:0})
+    console.log(req.session.total);
+  }else{
+     console.log("hghkjhkj");
+     console.log(req.session.total);
+    req.session.Wallet=req.session.user.Wallet-req.session.total
+    req.session.total=0
+    console.log(req.session.Wallet);
+    req.session.user.Wallet=req.session.Wallet
+    userHelpers.updateWallett(req.session.user._id,req.session.user.Wallet).then((resp)=>{
+
+    })
+    res.json({totall:req.session.total,Wallett:req.session.Wallet})   
+  }
+})
 
 module.exports = router;
