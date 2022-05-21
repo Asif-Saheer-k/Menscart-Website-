@@ -45,6 +45,7 @@
 - Chart & Graph reports in Admin side(weekly,monthly,yearly)
 - Download Sales Reports
 - View Total Orders,Users And Profit
+- Referal Link
 ## Future Updations :
 - Wallet
 - Seaching
