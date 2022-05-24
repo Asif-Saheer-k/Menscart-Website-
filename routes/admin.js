@@ -215,6 +215,7 @@ router.post("/updateStatus",verifylogin,async(req, res) => {
   console.log(userDetails);
   console.log(userDetails.email);
   console.log("hgjfhgfhg");
+  console.log(process.env.pass);
   console.log(orderStatus);
 
   if (orderStatus == "canceled") {
@@ -227,7 +228,7 @@ router.post("/updateStatus",verifylogin,async(req, res) => {
       service:'gmail',
         auth: {
           user: 'asifsaheer7034@gmail.com', // generated ethereal user
-          pass: 7034515383, // generated ethereal password
+          pass: process.env.pass, // generated ethereal password
         },
         tls:{
           rejectUnauthorized:false
@@ -258,7 +259,7 @@ router.post("/updateStatus",verifylogin,async(req, res) => {
       service:'gmail',
         auth: {
           user: 'asifsaheer7034@gmail.com', // generated ethereal user
-          pass: 7034515383, // generated ethereal password
+          pass: process.env.pass, // generated ethereal password
         },
         tls:{
           rejectUnauthorized:false
@@ -286,7 +287,7 @@ router.post("/updateStatus",verifylogin,async(req, res) => {
       service:'gmail',
         auth: {
           user: 'asifsaheer7034@gmail.com', // generated ethereal user
-          pass: 7034515383, // generated ethereal password
+          pass: process.env.pass, // generated ethereal password
         },
         tls:{
           rejectUnauthorized:false
@@ -312,7 +313,7 @@ router.post("/updateStatus",verifylogin,async(req, res) => {
       service:'gmail',
         auth: {
           user: 'asifsaheer7034@gmail.com', // generated ethereal user
-          pass: 7034515383, // generated ethereal password
+          pass: process.env.pass, // generated ethereal password
         },
         tls:{
           rejectUnauthorized:false
@@ -335,7 +336,7 @@ router.post("/updateStatus",verifylogin,async(req, res) => {
       service:'gmail',
         auth: {
           user: 'asifsaheer7034@gmail.com', // generated ethereal user
-          pass: 7034515383, // generated ethereal password
+          pass: process.env.pass, // generated ethereal password
         },
         tls:{
           rejectUnauthorized:false
