@@ -7,6 +7,7 @@ const { countDaySales } = require("../helpers/product-helpers");
 var router = express.Router();
 var productHelper = require("../helpers/product-helpers");
 const userHepers = require("../helpers/user-hepers");
+const nodemailer = require("nodemailer");
 
 /* GET users listing. */
 
@@ -201,36 +202,156 @@ router.get("/delete-users/:id",verifylogin,(req, res) => {
 });
 router.get("/all-orders",verifylogin,(req, res) => {
   productHelper.getAllorders().then((orders) => {
+    
     res.render("admin/all-orders", { orders, admin: true });
   });
 });
-router.post("/updateStatus",verifylogin,(req, res) => {
+router.post("/updateStatus",verifylogin,async(req, res) => {
   let orderStatus = req.body.status;
   let orderId = req.body.orderId;
+  let user=req.body.user
+  console.log(user);
+  let userDetails=await userHepers.finduseremail(user)
+  console.log(userDetails);
+  console.log(userDetails.email);
   console.log("hgjfhgfhg");
   console.log(orderStatus);
 
   if (orderStatus == "canceled") {
-    productHelper.canceledUpdate(orderId).then((res) => {
+   productHelper.canceledUpdate(orderId).then((res) => {
       console.log("caancled");
       console.log(res);
     });
+
+      let transporter = nodemailer.createTransport({
+      service:'gmail',
+        auth: {
+          user: 'asifsaheer7034@gmail.com', // generated ethereal user
+          pass: 7034515383, // generated ethereal password
+        },
+        tls:{
+          rejectUnauthorized:false
+        }
+      });
+    
+      // send mail with defined transport object
+     transporter.sendMail({
+        from: '"Fred Foo 👻" <asifsaheer7034@gmail.com>', // sender address
+        to:userDetails.email, // list of receivers
+        subject: "Hello ✔", // Subject line
+        text: "Your order has been cancelled", // plain text body
+        html: "<b> Your order has been canclled </b>", // html body
+      });
+    
+    
+
+
+
+  
   } else if (orderStatus == "Delived") {
+
     userHepers.placedUpdate(orderId).then((response) => {
-      console.log("placed");
+     
     });
+    
+    let transporter = nodemailer.createTransport({
+      service:'gmail',
+        auth: {
+          user: 'asifsaheer7034@gmail.com', // generated ethereal user
+          pass: 7034515383, // generated ethereal password
+        },
+        tls:{
+          rejectUnauthorized:false
+        }
+      });
+    
+      // send mail with defined transport object
+     transporter.sendMail({
+        from: '"Fred Foo 👻" <asifsaheer7034@gmail.com>', // sender address
+        to:userDetails.email, // list of receivers
+        subject: "Hello ✔", // Subject line
+        text: "Your order has been Delivered", // plain text body
+        html: "<b> Your order has been Delivered </b>", // html body
+      });
+    
+
+
+
   } else if (orderStatus == "order confirmed") {
     userHepers.placedUpdatecon(orderId).then((response) => {
-      console.log("placed");
+ 
     });
+
+    let transporter = nodemailer.createTransport({
+      service:'gmail',
+        auth: {
+          user: 'asifsaheer7034@gmail.com', // generated ethereal user
+          pass: 7034515383, // generated ethereal password
+        },
+        tls:{
+          rejectUnauthorized:false
+        }
+      });
+    
+      // send mail with defined transport object
+     transporter.sendMail({
+        from: '"Fred Foo 👻" <asifsaheer7034@gmail.com>', // sender address
+        to:userDetails.email, // list of receivers
+        subject: "Hello ✔", // Subject line
+        text: "Your order has been confirmed", // plain text body
+        html: "<b> Your order has been confirmed </b>", // html body
+      });
+
+
+
+
   } else if (orderStatus == "shipped") {
     userHepers.placedUpdateship(orderId).then((response) => {
-      console.log("placed");
     });
+    let transporter = nodemailer.createTransport({
+      service:'gmail',
+        auth: {
+          user: 'asifsaheer7034@gmail.com', // generated ethereal user
+          pass: 7034515383, // generated ethereal password
+        },
+        tls:{
+          rejectUnauthorized:false
+        }
+      });
+    
+      // send mail with defined transport object
+     transporter.sendMail({
+        from: '"Fred Foo 👻" <asifsaheer7034@gmail.com>', // sender address
+        to:userDetails.email, // list of receivers
+        subject: "Hello ✔", // Subject line
+        text: "Your order has been Shipped", // plain text body
+        html: "<b> Your order has been Shipped </b>", // html body
+      });
   } else if (orderStatus == "Arriving") {
     userHepers.placedUpdatesArriv(orderId).then((response) => {
       console.log("placed");
     });
+    let transporter = nodemailer.createTransport({
+      service:'gmail',
+        auth: {
+          user: 'asifsaheer7034@gmail.com', // generated ethereal user
+          pass: 7034515383, // generated ethereal password
+        },
+        tls:{
+          rejectUnauthorized:false
+        }
+      });
+    
+      // send mail with defined transport object
+     transporter.sendMail({
+        from: '"Fred Foo 👻" <asifsaheer7034@gmail.com>', // sender address
+        to:userDetails.email, // list of receivers
+        subject: "Hello ✔", // Subject line
+        text: "Your order  Arriving Today", // plain text body
+        html: "<b> Your order  Arriving Today </b>", // html body
+      });
+
+    
   }
   console.log(orderId);
   productHelper.upadateStatus(orderId, orderStatus).then((response) => {

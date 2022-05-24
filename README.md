@@ -28,9 +28,17 @@
 - Cancell Order
 - Order History
 - User Profile
+- Change Password(with OTP verification)
+- Add Address
+- Edit Address
+- Delete Address
+- Select Address
 - High-Resolution Photos
 - Form Validation
 - Responsive Design
+- Referal Link
+- User Wallet
+- Email Notification
 ## Involved Features In Admin
 - Admin Authentication
 - View Products,Category And Banner
@@ -45,9 +53,8 @@
 - Chart & Graph reports in Admin side(weekly,monthly,yearly)
 - Download Sales Reports
 - View Total Orders,Users And Profit
-- Referal Link
+- Change Order Status Email Notification
 ## Future Updations :
-- Wallet
 - Seaching
 - Guest User
 - Google Authentication

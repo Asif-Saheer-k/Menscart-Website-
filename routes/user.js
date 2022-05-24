@@ -121,10 +121,9 @@ router.post("/signup", (req, res) => {
 });
 router.post('/singupverify-otp',(req,res)=>{
 
-  if (req.session.userDetails.referedCode) {
+  if (req.session.userDetails.referedCode){
     req.session.userDetails.Wallet=100
-    userHelpers.findrefferCode(req.body.referedCode).then(()=>{
-      
+    userHelpers.findrefferCode(req.body.referedCode).then(()=>{  
     })
   }else{
     req.session.userDetails.Wallet=0
@@ -146,6 +145,27 @@ router.post('/singupverify-otp',(req,res)=>{
     const user = resp.valid;
 
     if (user) {
+      const output=`<p> Welcome To Menscart</p> 
+        `;
+      let transporter = nodemailer.createTransport({
+        service:'gmail',
+          auth: {
+            user: 'asifsaheer7034@gmail.com', // generated ethereal user
+            pass: 7034515383, // generated ethereal password
+          },
+          tls:{
+            rejectUnauthorized:false
+          }
+        });
+      
+        // send mail with defined transport object
+       transporter.sendMail({
+          from: '"Fred Foo 👻" <asifsaheer7034@gmail.com>', // sender address
+          to:userDetails.email, // list of receivers
+          subject: "Hello ✔", // Subject line
+          text:req.session.userDetails.name+"Welcome To menscart", // plain text body
+          html: "<b>req.session.userDetails.name+Welcome To menscart</b>", // html body
+        });
       userHelpers.doSignup(req.session.userDetails).then((response) => {
         console.log(response);
         res.redirect("/login");
@@ -207,13 +227,14 @@ router.get("/cart", verifylogin, async (req, res) => {
     );
   }
 let Wallet=await userHepers.findWallet(req.session.user._id)
+console.log(Wallet);
 
   if (cartCount==0) {
     res.render("user/cart-empty", {
       products,
       user: req.session.user,
       cartCount,
-      total,
+      total,       
       wishilistCount
   
     });
@@ -224,8 +245,7 @@ let Wallet=await userHepers.findWallet(req.session.user._id)
       cartCount,
       total,
       wishilistCount,
-      Wallet
-      
+      Wallet, 
     });
   }
 });

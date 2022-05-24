@@ -1126,6 +1126,13 @@ module.exports = {
       let Wallet=await db.get().collection(collection.USER_COLLECTION).findOne({_id:objectId(user)})
       resolve(Wallet.Wallet)
     })
-  }
- 
+  },
+  finduseremail:(id)=>{
+    return new promise(async(resolve,reject)=>{
+      let user=await db.get().collection(collection.USER_COLLECTION).findOne({_id:objectId(id)})
+      console.log("re",user);
+      resolve(user)   
+    })   
+  }       
+  
 }
