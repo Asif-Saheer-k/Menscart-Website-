@@ -318,8 +318,9 @@ router.post("/updateStatus",verifylogin,async(req, res) => {
         tls:{
           rejectUnauthorized:false
         }
-      });
     
+      });
+      console.log(process.env.pass,transporter);
       // send mail with defined transport object
      transporter.sendMail({
         from: '"Fred Foo 👻" <asifsaheer7034@gmail.com>', // sender address
