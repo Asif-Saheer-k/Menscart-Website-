@@ -1,5 +1,5 @@
 # Menscart-Website
-# Is an E-commerce website that deals with selling clothes
+# Is an E-commerce webapplication that deals with selling clothes
 ## Used Technologies:
 - Html
 - Css
